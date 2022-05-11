@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block title %}
+{{current_user_name}}'s details
+{% endblock %}
+
+{% block content %}
+
+<!--<img src="{{current_user_image_url}}" style="max-width: 100px; max-height: 100px;">-->
+
+<p>{{current_user_name}} has {{linkworker_client_count}} client PACs.</p>
+
+{% for clientname, clientid, clientprofileid, clientfirstname, clientlastname, clientemail, clientphone, clientimageurl, clientmood, clientmoodicon, clientmooddatetime, clientsupporterlist in clientdetails %}
+<div class="card m-1" style="width: 20rem;  display: inline-block;">
+
+    <div class="card-header">
+        <img src="{{clientimageurl}}" class="card-img-top" style="float: right; width: 50px; height: 50px;" alt="client's avatar image">
+        <h5 class="card-title"><a href="/dashboard/pac/{{clientid}}/details" title="Click for further details">{{ clientname }}</a></h5>
+        <hr style="clear: both;">
+        <i class="fas fa-phone-square"></i> {{clientphone}} <br />
+        <i class="fas fa-envelope-square"></i> <a href="mailto:{{clientemail}}?subject=SERVICE project">{{clientemail}}</a>
+    </div>
+
+  <div class="card-body">
+      <div class="card-text">
+          <p class="lead">
+          {% if clientmooddatetime %}
+          <b>{{clientmoodicon|safe}}&nbsp;{{clientmood}}</b>
+              <span class="small text-muted"><br />({{clientmooddatetime|naturaltime}})</span>
+          {% else %}
+          No recent moods recorded<br />
+          {% endif %}
+          </p>
+
+                    <div id="sparkline">
+                        <canvas id="moodsparkline_chart_{{clientid}}" width="278" height="40" style="background-color: #f8f9fa;" data-url="{% url 'moodsparkline_chart' clientid %}" aria-label="Tiny inline chart showing 7-day mood positivity trend" role="img"></canvas>
+                        <script>
+
+                        $(function () {
+
+                            var $moodChart = $("#moodsparkline_chart_{{clientid}}");
+                            $.ajax({
+                                url: $moodChart.data("url"),
+                                success: function (data) {
+
+                                    var ctx = $moodChart[0].getContext("2d");
+
+                                    new Chart(ctx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: data.labels,
+                                            datasets: [{
+                                                backgroundColor: "rgba(0,123,255,0.2)",
+                                                borderColor: "#007bff",
+                                                borderWidth: 1,
+                                                pointBorderColor: "#fff",
+                                                pointBorderWidth: 1,
+                                                data: data.dataset1
+                                                }
+                                            ],
+                                        },
+                                        options: {
+                                            responsive: false,                                            spanGaps: false,
+                                            fill: false,
+                                            tooltips: {
+                                                bodySpacing: 1,
+                                                mode: "nearest",
+                                                intersect: 0,
+                                                position: "nearest",
+                                                xPadding: 2,
+                                                yPadding: 2,
+                                                caretPadding: 5,
+                                                },
+                                            hover: {mode: null},
+                                            animation: {
+                                                duration: 1000,
+                                                easing: 'easeOutBounce'
+                                            },
+                                            title: {
+                                                display: false,
+                                            },
+                                            legend: {
+                                                display: false,
+                                            },
+                                            scales: {
+                                                xAxes:[{
+                                                    label: {
+                                                        display: false,
+                                                    },
+                                                    display: false,
+                                                    gridLines: false,
+                                                    scaleShowLabels : false,
+                                                    ticks: {
+                                                        display: false,
+                                                    },
+                                                    gridLines: {
+                                                        zeroLineColor: "rgba(0,123,255,0.2)",
+                                                        drawTicks: false,
+                                                        display: false,
+                                                        drawBorder: false
+                                                    }
+                                                }],
+                                                yAxes: [{
+                                                    label: {
+                                                        display: false,
+                                                    },
+                                                    ticks: {
+                                                        display: false,
+                                                    },
+                                                    gridLines: {
+                                                        zeroLineColor: "rgba(0,123,255,0.2)",
+                                                        drawTicks: false,
+                                                        display: false,
+                                                        drawBorder: false
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    });
+
+                                }
+                            });
+
+                        });
+
+                    </script>
+                    </div> <!-- sparkline -->
+
+
+          <hr>
+          <h6 class="card-subtitle mb-2 text-muted">{{clientsupporterlist|length}} supporter{{clientsupporterlist|length|pluralize}}</h6>
+          {% for supportername in clientsupporterlist %}
+              {{supportername}}<br />
+          {% empty %}
+              No supporters.
+          {% endfor %}
+      </div><!-- card-text -->
+  </div><!-- card-body -->
+
+</div><!-- card -->
+
+{% empty %}
+  No clients.
+{% endfor %}
+
+<!--<hr>-->
+<!--<h5>Debugging messages, will be removed when out of beta</h5>-->
+<!--{{debugmessage}}-->
+{% endblock %}

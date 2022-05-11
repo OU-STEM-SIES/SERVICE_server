@@ -1,0 +1,33 @@
+[
+  {
+    "model": "moods.Moods",
+    "pk": 9999,
+    "fields": {
+      "user": 5,
+      "current_mood": "CL",
+      "time": "2021-03-09T00:00:00Z",
+      "include_wellbeing": true,
+      "wellbeing": 4,
+      "loneliness": 2,
+      "whatdoing": "YOGA",
+      "spoketosomeone": true,
+      "spoketosomeone_who": "Dad",
+      "hours_bed": 5,
+      "hours_sofa": 3,
+      "hours_kitchen": 1,
+      "hours_garden": 0
+    }
+  },
+  {
+    "model": "moods.Pastimes",
+    "pk": 9999,
+    "fields": {
+      "mood": 160,
+      "whatdoing": "VGAM",
+      "whowith": [
+        89,
+        90
+      ]
+    }
+  }
+]

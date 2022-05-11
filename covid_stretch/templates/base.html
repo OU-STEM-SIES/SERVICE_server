@@ -1,0 +1,213 @@
+<!-- templates/base.html -->
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- reference your installed Font Awesome Free package's files here -->
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- reference your installed Font Awesome Pro package's files here -->
+    <link href="{% static 'fontawesomepro/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+    <title>SERVICE</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'cropped-service_logo2_icon-32x32.png' %}" sizes="32x32"/>
+    <link rel="icon" href="{% static 'cropped-service_logo2_icon-32x32.png' %}" sizes="32x32"/>
+    <link rel="icon" href="{% static 'cropped-service_logo2_icon-192x192.png' %}" sizes="192x192"/>
+    <link rel="apple-touch-icon" href="{% static 'cropped-service_logo2_icon-180x180.png' %}"/>
+    <meta name="msapplication-TileImage" content="{% static 'cropped-service_logo2_icon-270x270.png' %}"/>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    {% block header %}
+    {% endblock %}
+
+    <style>
+
+        body.servicecontent {
+            background: rgb(0,123,255);
+            background: linear-gradient(90deg,
+                rgba(0,123,255,0.33) 0%,
+                rgba(0,123,255,0.1) 33%,
+                rgba(0,123,255,0.1) 67%,
+                rgba(0,123,255,0.33) 100%
+            );
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        nav.topservicebar {
+            background: rgb(0,123,255);
+            background: linear-gradient(0deg, rgba(0,123,255,0) 0%, rgba(0,123,255,1) 25%, rgba(0,123,255,1) 100%);
+        }
+        nav.bottomservicebar {
+            background: rgb(0,123,255);
+            background: linear-gradient(180deg, rgba(0,123,255,0) 0%, rgba(0,123,255,1) 25%, rgba(0,123,255,1) 100%) !IMPORTANT;
+        }
+
+        label:not(.form-check-label),
+        label[for="id_smoking"],
+        label[for="id_family_has"],
+        label[for="id_link_worker_has"]
+        {
+            font-weight: 700;
+        }
+
+        /*#id_family_bond,*/
+        /*#id_link_worker_bond,*/
+        /*#id_community_bond*/
+        /*{*/
+        /*    width: 4em;*/
+        /*    display: inline-block;*/
+        /*}*/
+
+        #id_date_of_birth_day {
+            display: inline-block;
+            width: 4em;
+        }
+        #id_date_of_birth_month {
+            display: inline-block;
+            width: 10em;
+        }
+        #id_date_of_birth_year {
+            display: inline-block;
+            width: 5em;
+        }
+    </style>
+
+</head>
+
+<body class="servicecontent">
+<nav class="navbar navbar-expand-lg navbar-light topservicebar pt-0"> <!-- bg-primary -->
+    {% if includenavigation %}
+    <a class="navbar-brand text-light mr-1" href="{% url 'dashboard' %}">
+        SERVICE
+    </a>
+    {% else %}
+    <a class="navbar-brand text-light mr-1" href="#">
+        SERVICE
+    </a>
+    {% endif %}
+    <span class="badge badge-warning mr-3">&beta;</span>&nbsp;
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            {% if includenavigation %}
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard/" target="_new">Research&nbsp;dashboard</a>
+            </li>
+            <li class="nav-item">
+<!--                <a class="nav-link" href="/dashboard/">Linkworker <span class="sr-only">(current)</span></a>-->
+                <a class="nav-link" href="/dashboard/linkworkers">Linkworker&nbsp;list</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard/pacs" target="_new">People&nbsp;at&nbsp;Centre</a>
+            </li>
+            {% endif %}
+        </ul>
+
+<!--            <li class="nav-item dropdown">-->
+<!--                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink1" role="button"-->
+<!--                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                    Resources&hellip;-->
+<!--                </a>-->
+<!--                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink1">-->
+<!--                    <a class="dropdown-item" href="/admin/">System Management</a>-->
+<!--                    <h6 class="dropdown-header">Technologies</h6>-->
+<!--                    <a class="dropdown-item" href="https://www.python.org">Python</a>-->
+<!--                    <a class="dropdown-item" href="https://www.djangoproject.com">Django</a>-->
+<!--                    <a class="dropdown-item" href="https://getbootstrap.com/docs/4.3/getting-started/introduction/">Bootstrap</a>-->
+<!--                </div>-->
+<!--            </li>-->
+
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav justify-content-end" style="width: 100%;">
+            {% if isAdmin %}
+                <a class="btn-sm btn-warning">Admin mode</a>
+            {% endif %}
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle  text-light" href="#" id="navbarDropdownMenuLink2" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle"></i> {{user.first_name}} {{user.last_name}} ({{user.username}})&hellip;
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink2">
+                    <a class="dropdown-item" href="/accounts/logout/">Log out</a>
+                    <div class="dropdown-divider"></div>
+                    <h6 class="dropdown-header">Account options</h6>
+                    <a class="dropdown-item" href="/dashboard/password/">Change your password</a>
+                    <a class="dropdown-item" href="/dashboard/account/">Edit your account</a>
+                    <a class="dropdown-item" href="/dashboard/profile/">Edit your profile</a>
+                    <a class="dropdown-item" href="/accounts/password_reset/">Request a password reset</a>
+                </div>
+            </li>
+            {% endif %}
+
+        </ul>
+    </div>
+
+</nav>
+<div class="container m-3">
+
+    {% if messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>&nbsp;
+        <strong>Attention</strong><br/>
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message|safe }}
+            </li>
+            {% endfor %}
+        </ul>
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <h1>{% block title %}
+    {% endblock %}</h1>
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bottomservicebar"> <!-- bg-primary -->
+    <p class="text-light mb-0 mt-1">&copy; SERVICE /
+        <a class="text-light" href="http://stem.open.ac.uk">STEM</a>
+        /
+        <a class="text-light" href="http://www.open.ac.uk">The Open University</a>
+        2020-21
+    </p>
+</nav>
+
+</body>
+</html>

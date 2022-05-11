@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block title %}
+{{user_profile.user.first_name}} {{user_profile.user.last_name}}'s summary
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-12 p-2">
+        <div class="card" style="height: 100%;">
+            <div class="card-header m-0">
+                <h5 class="card-title m-0">Link worker contact details</h5>
+            </div>
+            <div class="card-body">
+                <div class="card-text">
+                    <p class="lead m-0">
+                        {{user_profile.user.first_name}}'s link worker is <strong>{{linkworker_profile.user.first_name}} {{linkworker_profile.user.last_name}}</strong>.&nbsp;&nbsp;&nbsp;
+                    <i class="fas fa-phone-square"></i> {{linkworker_profile.phone}} &nbsp;&nbsp;&nbsp;
+                    <i class="fas fa-envelope-square"></i> <a href="mailto:{{linkworker_profile.user.email}}?subject=SERVICE">{{linkworker_profile.user.email}}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-4 p-2">
+        <div class="card" style="height: 100%;">
+
+            <div class="card-header">
+                <img src="{{user_profile.image.url}}" class="card-img-top" style="float: right; width: 50px; height: 50px;"
+                     alt="{{user_profile.user.first_name}}'s avatar image">
+                <h5 class="card-title">{{user_profile.user.first_name}} {{user_profile.user.last_name}}</h5>
+                <hr style="clear: both;">
+                <i class="fas fa-phone-square"></i> {{user_profile.phone}} <br/>
+                <i class="fas fa-envelope-square"></i>
+                <a href="mailto:{{user_profile.user.email}}?subject=SERVICE">{{user_profile.user.email}}</a>
+            </div>
+
+            <div class="card-body">
+                <div class="card-text">
+                    <p class="lead">
+                        {% if client_mood_datetime %}
+                        <b>{{client_moodicon|safe}}&nbsp;{{client_mood}}</b>
+                        <span class="small text-muted">({{client_mood_datetime|naturaltime}})</span>
+                        {% else %}
+                        No moods recorded<br/>
+                        {% endif %}
+                    </p>
+
+                    <h6 class="card-subtitle mb-2 text-muted">Last 7 days positivity:</h6>
+                    <div id="sparkline">
+                        <canvas id="moodsparkline_chart_{{user_profile.user.id}}" width="322" height="40" style="background-color: #f8f9fa;" data-url="{% url 'moodsparkline_chart' user_profile.user.id %}" aria-label="Tiny inline chart showing 7-day mood positivity trend" role="img"></canvas>
+                        <script>
+
+                        $(function () {
+
+                            var $moodChart = $("#moodsparkline_chart_{{user_profile.user.id}}");
+                            $.ajax({
+                                url: $moodChart.data("url"),
+                                success: function (data) {
+
+                                    var ctx = $moodChart[0].getContext("2d");
+
+                                    new Chart(ctx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: data.labels,
+                                            datasets: [{
+                                                backgroundColor: "rgba(0,123,255,0.2)",
+                                                borderColor: "#007bff",
+                                                borderWidth: 1,
+                                                pointBorderColor: "#fff",
+                                                pointBorderWidth: 1,
+                                                data: data.dataset1
+                                                }
+                                            ],
+                                        },
+                                        options: {
+                                            responsive: false,                                            spanGaps: false,
+                                            fill: false,
+                                            tooltips: {
+                                                bodySpacing: 1,
+                                                mode: "nearest",
+                                                intersect: 0,
+                                                position: "nearest",
+                                                xPadding: 2,
+                                                yPadding: 2,
+                                                caretPadding: 5,
+                                                },
+                                            hover: {mode: null},
+                                            animation: {
+                                                duration: 1000,
+                                                easing: 'easeOutBounce'
+                                            },
+                                            title: {
+                                                display: false,
+                                            },
+                                            legend: {
+                                                display: false,
+                                            },
+                                            scales: {
+                                                xAxes:[{
+                                                    label: {
+                                                        display: false,
+                                                    },
+                                                    display: false,
+                                                    gridLines: false,
+                                                    scaleShowLabels : false,
+                                                    ticks: {
+                                                        display: false,
+                                                    },
+                                                    gridLines: {
+                                                        zeroLineColor: "rgba(0,123,255,0.2)",
+                                                        drawTicks: false,
+                                                        display: false,
+                                                        drawBorder: false
+                                                    }
+                                                }],
+                                                yAxes: [{
+                                                    label: {
+                                                        display: false,
+                                                    },
+                                                    ticks: {
+                                                        display: false,
+                                                    },
+                                                    gridLines: {
+                                                        zeroLineColor: "rgba(0,123,255,0.2)",
+                                                        drawTicks: false,
+                                                        display: false,
+                                                        drawBorder: false
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    });
+
+                                }
+                            });
+
+                        });
+
+                    </script>
+                    </div><!-- sparkline -->
+
+                    <hr>
+
+                    <h6 class="card-subtitle mb-2 text-muted">Inner circle: {{cos1_profiles|length}}
+                        supporter{{cos1_profiles|length|pluralize}}</h6>
+                    {% for oneprofile in cos1_profiles %}
+                    {{oneprofile.user.first_name}}&nbsp;{{oneprofile.user.last_name}}<br/>
+                    {% empty %}
+{#                    <span class="text-muted">Nobody here</span>#}
+                    {% endfor %}
+                    <br />
+
+                    <h6 class="card-subtitle mb-2 text-muted">Middle circle: {{cos2_profiles|length}}
+                        supporter{{cos2_profiles|length|pluralize}}</h6>
+                    {% for oneprofile in cos2_profiles %}
+                    {{oneprofile.user.first_name}}&nbsp;{{oneprofile.user.last_name}}<br/>
+                    {% empty %}
+{#                    <span class="text-muted">Nobody here</span>#}
+                    {% endfor %}
+                    <br />
+
+                    <h6 class="card-subtitle mb-2 text-muted">Outer circle: {{cos3_profiles|length}}
+                        supporter{{cos3_profiles|length|pluralize}}</h6>
+                    {% for oneprofile in cos3_profiles %}
+                    {{oneprofile.user.first_name}}&nbsp;{{oneprofile.user.last_name}}<br/>
+                    {% empty %}
+{#                    <span class="text-muted">Nobody here</span>#}
+                    {% endfor %}
+
+                    <hr>
+                    <a class="btn btn-primary btn-block" href="{% url 'pac_timeline' user_profile.user.id %}">
+                        {{user_profile.user.first_name}}'s mood timeline
+                    </a>
+                    <br />
+                    <a class="btn btn-primary btn-block btn-warning" href="{% url 'pac_export' user_profile.user.id %}">
+                        Download {{user_profile.user.first_name}}'s mood data (as .CSV)
+                    </a>
+                    <br />
+                    <a class="btn btn-primary btn-block btn-warning" href="{% url 'pac_export_circles' user_profile.user.id %}">
+                        Download {{user_profile.user.first_name}}'s circles (as .CSV)
+                    </a>
+                    <br />
+                    <a class="btn btn-primary btn-block btn-warning" href="{% url 'pac_export_userlog' user_profile.user.id %}">
+                        Download {{user_profile.user.first_name}}'s user log (as .CSV)
+                    </a>
+                </div><!-- card-text -->
+            </div><!-- card-body -->
+
+        </div><!-- contact summary card -->
+    </div>
+
+    <div class="col-8 p-2">
+        <div class="card">
+
+            <div class="card-header">
+                <h5 class="card-title">Recent mood distribution &nbsp; <small>Click legend to hide/show sets, mouseover chart for details</small></h5>
+            </div>
+
+            <div class="card-body" id="moodspiderchart">
+                <div id="containermoodspider">
+                    <canvas id="moodspider-chart" data-url="{% url 'moodspider-chart' user_profile.user.id %}" height="200" aria-label="Spider chart showing distribution of moods for each of the last three 7-day periods" role="img"></canvas>
+                </div>
+
+                <script>
+
+                    $(function () {
+
+                        var $moodChart = $("#moodspider-chart");
+                        $.ajax({
+                            url: $moodChart.data("url"),
+                            success: function (data) {
+
+                                var ctx = $moodChart[0].getContext("2d");
+
+                                new Chart(ctx, {
+                                    type: 'radar',
+                                    data: {
+                                        labels: data.labels,
+                                        datasets: [{
+                                            label: "Past 7 days",
+                                            backgroundColor: "rgba(0,123,255,0.2)",
+                                            borderColor: "#007bff",
+                                            borderWidth: 3,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset1
+                                            },
+                                            {
+                                            label: "Previous 7 days",
+                                            backgroundColor: "rgba(40,167,69,0.2)",
+                                            borderColor: "#28a745",
+                                            borderWidth: 3,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset2
+                                            },
+                                            {
+                                            hidden: true,
+                                            label: "Earlier 7 days",
+                                            backgroundColor: "rgba(220,53,69,0.2)",
+                                            borderColor: "#dc3545",
+                                            borderWidth: 3,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset3
+                                            }
+                                        ],
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        legend: {
+                                            position: 'right',
+                                        },
+                                        title: {
+                                            display: false,
+                                            text: 'Recent mood distribution'
+                                        },
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeOutBounce'
+                                        },
+                                        scale: {
+                                            ticks: {
+                                                beginAtZero: true,
+                                                min: 0,
+                                                stepSize: 1
+                                            },
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+
+                    });
+
+                </script>
+            </div><!-- moodspiderchart -->
+        </div><!-- spider chart card -->
+    </div><!-- col -->
+</div> <!-- row -->
+
+<div class="row">
+    <div class="col-12 p-2">
+        <div class="card">
+
+            <div class="card-header">
+                <h5 class="card-title">Recent mood positivity and engagement &nbsp; <small>Click legend to hide/show sets, mouseover chart for details</small></h5>
+            </div>
+
+            <div class="card-body" id="moodtimelinechart">
+                <div id="containermoodtimeline">
+                    <canvas id="moodtimeline-chart" data-url="{% url 'moodtimeline-chart' user_profile.user.id %}" height="64" aria-label="Line chart showing positive versus negative and active versus passive moods" role="img"></canvas>
+                </div>
+
+                <script>
+
+                    $(function () {
+
+                        var $moodChart = $("#moodtimeline-chart");
+                        $.ajax({
+                            url: $moodChart.data("url"),
+                            success: function (data) {
+
+                                var ctx = $moodChart[0].getContext("2d");
+
+                                new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: data.labels,
+                                        datasets: [{
+                                            label: 'Positive/Negative',
+                                            backgroundColor: "rgba(0,123,255,0.2)",
+                                            borderColor: "#007bff",
+                                            borderWidth: 3,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset1
+                                            },
+                                            {
+                                            label: 'Active/Passive',
+                                            backgroundColor: "rgba(40,167,69,0.2)",
+                                            borderColor: "#28a745",
+                                            borderWidth: 3,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset2
+                                            },
+                                            // {
+                                            // label: "Earlier 7 days",
+                                            // backgroundColor: "rgba(220,53,69,0.2)",
+                                            // borderColor: "#dc3545",
+                                            // borderWidth: 3,
+                                            // pointBorderColor: "#fff",
+                                            // pointBorderWidth: 1,
+                                            // data: data.dataset3
+                                            // }
+                                        ],
+                                    },
+                                    options: {
+                                        spanGaps: false,
+                                        responsive: true,
+                                        fill: false,
+                                        legend: {
+                                            position: 'top',
+                                        },
+                                        title: {
+                                            display: false,
+                                            text: 'Recent mood progression'
+                                        },
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeOutBounce'
+                                        },
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    suggestedMin: -2,
+                                                    suggestedMax: 2,
+                                                    stepSize: 1,
+                                                    maxTicksLimit: 5,
+                                                }
+                                            }]
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+
+                    });
+
+                </script>
+            </div><!-- moodtimelinechart -->
+        </div><!-- line chart card -->
+    </div><!-- col -->
+</div> <!-- row -->
+
+{% if debugmessage %}
+<hr>
+<h5>Debugging message (not normally visible)</h5>
+{{debugmessage}}
+{% endif %}
+{% endblock %}

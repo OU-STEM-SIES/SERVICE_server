@@ -1,0 +1,5 @@
+#!/bin/bash
+# See https://docs.docker.com/storage/volumes/ for the use of Docker volumes.
+
+# Launch detached:
+docker run -d --mount source=SERVICE_media_volume,target=/home/app/web/static --publish 8080:80/tcp --name service-nginx -t service-nginx-image

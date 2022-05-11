@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Your account basics
+{% endblock %}
+
+{% block content %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.first_name|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.last_name|as_crispy_field }}
+        </div>
+    </div>
+    <br />
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            {{ form.username|as_crispy_field }}
+        </div>
+        <div class="form-group col-md-6 mb-0">
+            {{ form.email|as_crispy_field }}
+        </div>
+    </div>
+    <br />
+    <div class="form-row">
+        <div class="form-group col-md-6 mb-0">
+            <button id="savebutton" class="btn btn-primary" type="submit">
+                Save changes
+            </button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block title %}
+Research dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container p-0">
+    <div class="row">
+        <div class="col-sm">
+            <h4>Key</h4>
+            <table class="table table-sm table-hover">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Mood</th>
+                    <th scope="col" style="text-align: center;">Glyph</th>
+                    <th scope="col" style="text-align: right;">Positivity</th>
+                    <th scope="col" style="text-align: right;">Activity</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for moodabbr, moodstring, moodicon, moodpos, moodact in all_mood_lookups %}
+                <tr>
+                    <td style="font-family: monospace; font-size: 120%;">
+                        {{moodabbr}}
+                    </td>
+                    <td>{{moodstring}}</td>
+                    <td class="p-0" style="text-align: center; font-size: 150%;">
+                    	{{moodicon|safe}}
+                    </td>
+                    <td style="text-align: right; font-family: monospace; font-size: 120%;">
+                        {% if moodpos >= 1 %}
+                        +{{moodpos}}
+                        {% else %}
+                        {{moodpos}}
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right; font-family: monospace; font-size: 120%;">
+                        {% if moodact >= 1 %}
+                        +{{moodact}}
+                        {% else %}
+                        {{moodact}}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm">
+            <h4>Current records</h4>
+            <table class="table table-sm table-striped table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">Persons-at-centre</th>
+                    <th scope="col">Linkworkers</th>
+                    <th scope="col">Supporters</th>
+                    <th scope="col">Moods</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{pacs_count}}</td>
+                    <td>{{lnks_count}}</td>
+                    <td>{{sups_count}}</td>
+                    <td>{{moods_count}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<p>
+    If you have suggestions for insightful analysis to place here,
+    please pass ideas to the developers.
+</p>
+
+<hr>
+<h4>Browse data</h4>
+
+<div class="container p-0">
+    <div class="row p-3">
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" href="{% url 'linkworker_list' %}">
+                Browse linkworkers
+            </a>
+        </div>
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" href="{% url 'pac_list' %}">
+                Browse persons-at-centre
+            </a>
+        </div>
+    </div>
+</div>
+
+<hr>
+<h4>Downloads</h4>
+
+<div class="container p-0">
+    <div class="row p-3">
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" href="{% url 'export_people' %}">
+                Download all people data (as .CSV)
+            </a>
+        </div>
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" href="{% url 'export_moods' %}">
+                Download all mood data (as .CSV)
+            </a>
+        </div>
+        <div class="col-sm">
+            <a class="btn btn-primary btn-block" href="{% url 'export_userlog' %}">
+                Download all user log data (as .CSV)
+            </a>
+        </div>
+    </div>
+</div>
+
+<!--<hr>-->
+<!--<h5>Debugging messages, will be removed when out of beta</h5>-->
+<!--{{debugmessage}}-->
+{% endblock %}

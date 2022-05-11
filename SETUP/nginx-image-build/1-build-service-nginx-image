@@ -1,0 +1,5 @@
+#!/bin/bash
+# See https://docs.docker.com/storage/volumes/ for the use of Docker volumes.
+
+export DOCKER_BUILDKIT=1
+docker build --no-cache -t service-nginx-image .

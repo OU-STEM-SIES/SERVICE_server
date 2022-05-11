@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle"></i>&nbsp;
+    <strong>Warning</strong><br/>
+    You'll need to log in with a valid username to use this system.<br/>
+    If you don't have access, and think you should, please contact <a class='alert-link'
+                                                                      href='mailto:STEM-SERVICE-Project@open.ac.uk?subject=Access%20to%20SERVICE%20dashboard%20system'>STEM-SERVICE-Project@open.ac.uk</a>
+    by email.
+    <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<h5>User login</h5>
+<form method="post">
+    {% csrf_token %}
+
+    {% for hidden_field in form.hidden_fields %}
+    {{ hidden_field }}
+    {% endfor %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {{ form.source.errors }}
+    {{ form.source }}
+
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1" style="width: 160px;">User name</span>
+        </div>
+        {% if form.username.errors or form.username.value == "" %}
+        {% render_field form.username class="form-control is-invalid" placeholder="Enter an authorised username" autofocus="autofocus" required="required" aria-describedby="basic-addon1" %}
+        {% for error in form.username.errors %}
+        <div class="invalid-feedback">
+            {{ error }}
+        </div>
+        {% endfor %}
+        {% else %}
+        {% render_field form.username class="form-control is-valid" placeholder="Enter an authorised username" autofocus="autofocus" required="required" aria-describedby="basic-addon1" %}
+        {% endif %}
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon2" style="width: 160px;">Password</span>
+        </div>
+        {% if form.password.errors or form.password.value == "" %}
+        {% render_field form.password class="form-control is-invalid" placeholder="Enter the corresponding password" required="required" aria-describedby="basic-addon2" %}
+        {% for error in form.password.errors %}
+        <div class="invalid-feedback">
+            {{ error }}
+        </div>
+        {% endfor %}
+        {% else %}
+        {% render_field form.password class="form-control is-valid" placeholder="Enter the corresponding password" required="required" aria-describedby="basic-addon2" %}
+        {% endif %}
+    </div>
+
+    <!--    form.as_p -->
+    </div><button id ="loginbutton" class="btn btn-primary" style="margin-left: 190px;" type="submit">
+        Press return or enter, or click this button to log in
+    </button>
+    <br />
+    <br />
+    <a id ="passwordresetbutton" class="btn btn-primary" style="margin-left: 190px;" href="/accounts/password_reset/">If you cannot recall your password, click here.</a>
+    <br />
+</form>
+
+{% endblock %}

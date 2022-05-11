@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{% endblock %}
+
+{% block title %}
+Persons at centre
+{% endblock %}
+
+{% block content %}
+
+{% include "includes/paginator.html" with showsummary=True itemcounttotal=paginatedrecordcount pageofrecords=paginatedrecords pagelinks=paginatedpagelist currentpagenumber=paginatedpagecurrent userpreferencesform=userpreferencesform %}
+{% for record in paginatedrecords %}
+    <div class="card p-0 m-2" style="width: 30%; display: inline-block;">
+
+        <div class="card-header">
+            <img src="/media/{{record.user_profile.image}}" class="card-img-top" style="float: right; width: 50px; height: 50px;"
+                 alt="client's avatar image">
+            <h5 class="card-title">
+                <a href="/dashboard/pac/{{record.user_profile.user.id}}/details">
+                    {{ record.user_profile.user.first_name }} {{ record.user_profile.user.last_name }}
+                </a>
+            </h5>
+<!--            <hr style="clear: both;">-->
+<!--            <i class="fas fa-phone-square"></i> {{record.user_profile.phone}} <br/>-->
+<!--            <i class="fas fa-envelope-square"></i> <a href="mailto:{{record.user_profile.user.email}}?subject=SERVICE">{{record.user_profile.user.email}}</a>-->
+        </div>
+
+        <div class="card-body">
+            <div class="card-text">
+            <i class="fas fa-phone-square"></i> {{record.user_profile.phone}} <br/>
+            <i class="fas fa-envelope-square"></i> <a href="mailto:{{record.user_profile.user.email}}?subject=SERVICE">{{record.user_profile.user.email}}</a>
+{% comment %}
+                <p class="lead">
+                    {% if client_mood_datetime %}
+                    <b>{{client_moodicon|safe}}&nbsp;{{client_mood}}</b>
+                    <span class="small text-muted">({{client_mood_datetime|naturaltime}})</span>
+                    {% else %}
+                    No moods recorded<br/>
+                    {% endif %}
+                </p>
+                <div id="sparkline">
+                    <canvas id="moodsparkline_chart_{{client_user_id}}" width="322" height="40" style="background-color: #f8f9fa;" data-url="{% url 'moodsparkline_chart' client_user_id %}" aria-label="Tiny inline chart showing 7-day mood positivity trend" role="img"></canvas>
+                    <script>
+
+                    $(function () {
+
+                        var $moodChart = $("#moodsparkline_chart_{{client_user_id}}");
+                        $.ajax({
+                            url: $moodChart.data("url"),
+                            success: function (data) {
+
+                                var ctx = $moodChart[0].getContext("2d");
+
+                                new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: data.labels,
+                                        datasets: [{
+                                            backgroundColor: "rgba(0,123,255,0.2)",
+                                            borderColor: "#007bff",
+                                            borderWidth: 1,
+                                            pointBorderColor: "#fff",
+                                            pointBorderWidth: 1,
+                                            data: data.dataset1
+                                            }
+                                        ],
+                                    },
+                                    options: {
+                                        responsive: false,                                            spanGaps: false,
+                                        fill: false,
+                                        tooltips: {
+                                            bodySpacing: 1,
+                                            mode: "nearest",
+                                            intersect: 0,
+                                            position: "nearest",
+                                            xPadding: 2,
+                                            yPadding: 2,
+                                            caretPadding: 5,
+                                            },
+                                        hover: {mode: null},
+                                        animation: {
+                                            duration: 1000,
+                                            easing: 'easeOutBounce'
+                                        },
+                                        title: {
+                                            display: false,
+                                        },
+                                        legend: {
+                                            display: false,
+                                        },
+                                        scales: {
+                                            xAxes:[{
+                                                label: {
+                                                    display: false,
+                                                },
+                                                display: false,
+                                                gridLines: false,
+                                                scaleShowLabels : false,
+                                                ticks: {
+                                                    display: false,
+                                                },
+                                                gridLines: {
+                                                    zeroLineColor: "rgba(0,123,255,0.2)",
+                                                    drawTicks: false,
+                                                    display: false,
+                                                    drawBorder: false
+                                                }
+                                            }],
+                                            yAxes: [{
+                                                label: {
+                                                    display: false,
+                                                },
+                                                ticks: {
+                                                    display: false,
+                                                },
+                                                gridLines: {
+                                                    zeroLineColor: "rgba(0,123,255,0.2)",
+                                                    drawTicks: false,
+                                                    display: false,
+                                                    drawBorder: false
+                                                }
+                                            }]
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+
+                    });
+
+                </script>
+                </div><!-- sparkline -->
+<!--End of sparkline-->
+
+                <hr>
+                <h6 class="card-subtitle mb-2 text-muted">{{client_supporters_names|length}}
+                    supporter{{client_supporters_names|length|pluralize}}</h6>
+                {% for supportername in client_supporters_names %}
+                {{supportername}}<br/>
+                {% empty %}
+                No supporters.
+                {% endfor %}
+                <br />
+                <a class="btn btn-primary btn-block" href="{% url 'pac_export' client_user_id %}">
+                    Download mood data (as .CSV)
+                </a>
+{% endcomment %}
+<!--End of pac_export-->
+
+            </div><!-- card-text -->
+        </div><!-- card-body -->
+
+    </div><!-- contact summary card -->
+
+
+
+
+
+
+
+
+
+
+{% endfor %}
+
+<!--<hr>-->
+<!--<h5>Debugging messages, will be removed when out of beta</h5>-->
+<!--{{debugmessage|safe}}-->
+{% endblock %}

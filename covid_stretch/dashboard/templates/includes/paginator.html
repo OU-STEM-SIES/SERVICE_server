@@ -1,0 +1,78 @@
+{% load widget_tweaks %}
+
+<!--
+{ % include "includes/paginator.html" with showsummary=True itemcounttotal=archivedrecordcount pageofrecords=archivedrecords pagelinks=archivepagelist  currentpagenumber=archivepagecurrent userpreferencesform=userpreferencesform % }
+-->
+
+<div aria-label="Toolbar with button groups" class="btn-toolbar mb-3 justify-content-center" role="toolbar">
+
+    {% if showsummary == True %}
+    <p style="display: block;">
+        There {{ itemcounttotal|pluralize:"is,are" }} {{ itemcounttotal }}
+        record{{ itemcounttotal|pluralize:"s" }} matching the selected criteria.
+        This is page {{ pageofrecords.number }}
+        of {{ pageofrecords.paginator.num_pages }}.
+    </p>
+    {% endif %}
+
+    <div aria-label="toolbar" class="pagination" role="group">
+        <form class="form-inline" id="user_prefs_form" method="post">{% csrf_token %}
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Rows</span>
+                </div>
+                {% render_field userpreferencesform.rowsToDisplay class="form-control" style="width: 64px;" aria-describedby="basic-addon3" onChange="this.form.submit()" %}
+            </div>
+
+            <div class="step-links ml-2 mr-2">
+                {% if pageofrecords.has_previous %}
+                <a class="btn btn-primary" href="?page=1"><i class="fas fa-fast-backward"></i> First</a>
+                <a class="btn btn-primary" href="?page={{ pageofrecords.previous_page_number }}"><i
+                        class="fas fa-step-backward"></i> Previous</a>
+                {% else %}
+                <a class="btn btn-secondary disabled" disabled href=""><i class="fas fa-fast-backward"></i> First</a>
+                <a class="btn btn-secondary disabled" disabled href=""><i class="fas fa-step-backward"></i> Previous</a>
+                {% endif %}
+            </div>
+
+            <div class="current-links btn-group mr-2">
+                {% for pagenum in pagelinks %}
+                {% if pagenum %}
+                {% if pagenum == currentpagenumber %}
+                <a class="btn btn-secondary disabled" disabled href="">{{ pagenum }}</a>
+                {% else %}
+                <a class="btn btn-primary" href="?page={{ pagenum }}">{{ pagenum }}</a>
+                {% endif %}
+                {% else %}
+                <!--                <a class="btn btn-secondary disabled" href="" disabled>&nbsp;</a>-->
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="step-links mr-2">
+                {% if pageofrecords.has_next %}
+                <a class="btn btn-primary" href="?page={{ pageofrecords.next_page_number }}">Next <i
+                        class="fas fa-step-forward"></i></a>
+                <a class="btn btn-primary" href="?page={{ pageofrecords.paginator.num_pages }}">Last <i
+                        class="fas fa-fast-forward"></i></a>
+                {% else %}
+                <a class="btn btn-secondary disabled" disabled href="">Next <i class="fas fa-step-forward"></i></a>
+                <a class="btn btn-secondary disabled" disabled href="">Last <i class="fas fa-fast-forward"></i></a>
+                {% endif %}
+            </div>
+
+            <div class="input-group mr-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroupPrepend">Go to</span>
+                </div>
+                {% render_field userpreferencesform.gotoPage class="form-control" style="width: 72px;" aria-describedby="basic-addon3" onChange="this.form.submit()" %}
+            </div>
+
+            <button class="btn btn-warning" id="resetUserPreferences" name="resetUserPreferences" type="submit" value="True">
+                Reset
+                &nbsp;<i class="fas fa-eraser"></i>
+            </button>
+
+        </form>
+    </div>
+</div>
